@@ -21,14 +21,17 @@ print(img)
 print(label)
 
 
+
+
 def init_randomWeights(neurons = 128):
+    # weihts = [[[bias],[weights]]neuron]every neuron
     weights = [[[0],[None]*784] for _ in range(neurons)]
     for n in range(len(weights)):
-        #weights[n][1] = 
-        pass
+        for w in range(0,784):
+            weights[n][1][w] = (random()/5) - 0.1
+    return weights
 
-neurons = 128
-weights = [[[0],[None]*784] for _ in range(neurons)]
+#weights = init_randomWeights()
 
 with open("weights.json" ,"w") as  f:
     json.dump(weights, f)
