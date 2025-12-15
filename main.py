@@ -1,7 +1,7 @@
 from torchvision import datasets, transforms #type:ignore
 import json
 from random import random
-
+from math import e
 
 with open("hidden_layer.json") as f:
     weights = json.load(f) #weights and biases
@@ -23,20 +23,17 @@ img_flat = img.flatten().tolist()
 print(img_flat)
 print(label)
 
-def run_hidden_layer(data):#data is a 784 long arr
+def run_layer(data,weights):
     output = []
     for n in range(len(weights)):
         bias = weights[n][0][0]
         result = 0
-        for w in range(0,784):
+        for w in range(0,len(data)):
             result += (weights[n][1][w]*data[w])
-        #do sth
         result += bias 
         output.append(result)
     print(len(output))
     return output
-
-run_hidden_layer(img_flat)
 
 def init_randomWeights(neurons = 128, input_size = 784):
     # weihts = [[[bias],[weights]]neuron]every neuron
@@ -46,9 +43,23 @@ def init_randomWeights(neurons = 128, input_size = 784):
             weights[n][1][w] = (random()/5) - 0.1
     return weights
 
-#weights = init_randomWeights()
+def softmax(arr):
+    sum = 0
+    for i in arr:
+        sum += e ** i
+    for i in range(len(arr)):
+        arr[i] = e ** arr[i]/sum
+    return arr
 
-output_weights = init_randomWeights(10,128)
+hidden_layer_result = run_layer(img_flat, weights=weights)
+print(hidden_layer_result)
+output = run_layer(hidden_layer_result,weights=output_weights)
+print(output)
+print(softmax(output))
+
+
+# weights = init_randomWeights()
+# output_weights = init_randomWeights(10,128)
 
 with open("hidden_layer.json" ,"w") as  f:
     json.dump(weights, f)
