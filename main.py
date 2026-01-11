@@ -17,12 +17,12 @@ dataset = datasets.MNIST(
     transform=transforms.ToTensor()
 )
 
-print(dataset)
-img , label = dataset[0]
-img_flat = img.flatten().tolist()
+# print(dataset)
+# img , label = dataset[0]
+# img_flat = img.flatten().tolist()
 
-print(img_flat)
-print(label)
+# print(img_flat)
+# print(label)
 
 def run_layer(data,weights):
     output = []
@@ -80,7 +80,6 @@ def run_all_layers(img):
 # weights = init_randomWeights()
 # output_weights = init_randomWeights(10,128)
 
-run_all_layers(img_flat)
 
 def update_weights(weights,img_flat, label, learning_rate = 0.01):
     for neuron in range(len(weights)):
@@ -100,12 +99,14 @@ def update_weights(weights,img_flat, label, learning_rate = 0.01):
 
 
 
+def train_one_batch(start = 0):
+    for i in range(start, start+100):
+        img , label = dataset[i]
+        img_flat = img.flatten().tolist()
 
+        update_weights(weights,img_flat,label) #run hidden layer
+        update_weights(output_weights,img_flat,label) #run outpuit layer
 
-#run hidden layer
-update_weights(weights)
-#run outpuit layer
-update_weights(output_weights)
 
 with open("hidden_layer.json" ,"w") as  f:
     json.dump(weights, f)
