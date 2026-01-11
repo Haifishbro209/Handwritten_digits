@@ -68,21 +68,38 @@ def calculate_cost(right_answer, output):
             cost += output[i]**2
     return cost
 
-hidden_layer_result = run_layer(img_flat, weights=weights)
-print(hidden_layer_result)
-output = run_layer(hidden_layer_result,weights=output_weights)
-print(output)
-print(softmax(output))
 
 
+def run_all_layers(img):
+    hidden_layer_result = run_layer(img, weights=weights)
+    print(hidden_layer_result)
+    output = run_layer(hidden_layer_result,weights=output_weights)
+    print(output)
+    print(softmax(output))
+    return softmax(output)
 # weights = init_randomWeights()
 # output_weights = init_randomWeights(10,128)
 
+run_all_layers(img_flat)
 
 def update_weights(weights,img_flat, label, learning_rate = 0.01):
     for neuron in range(len(weights)):
         for w in range(len(weights[neuron][1])):
             weight = weights[neuron][1][w]
+            
+            weights[neuron][1][w] -= 0.001
+            output = run_all_layers(img_flat)
+            error_small_weight = calculate_cost(label,output)
+            weights[neuron][1][w] += 0.002
+            output = run_all_layers(img_flat)
+            error_big_weight = calculate_cost(label,output)
+
+            steigung = (error_big_weight - error_small_weight ) / 0.002
+
+            weights[neuron][1][w] = weight - (steigung * learning_rate)
+
+
+
 
 
 #run hidden layer
