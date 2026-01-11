@@ -108,8 +108,8 @@ def update_weights(weights,img_flat, label, learning_rate = 0.01):
 
 
 
-def train_one_epoch(start = 0):
-    for i in range(start, start+30000):#only half of the trainingsdata
+def train_one_epoch():
+    for i in range(len(dataset)):#only half of the trainingsdata
         img , label = dataset[i]
         img_flat = img.flatten().tolist()
 
