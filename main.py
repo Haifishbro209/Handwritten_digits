@@ -17,6 +17,15 @@ dataset = datasets.MNIST(
     transform=transforms.ToTensor()
 )
 
+test_data = datasets.MNIST(
+    root="./test_data",
+    train=False,
+    download=True,
+    transform=transforms.ToTensor()
+)
+
+print(len(test_data))
+
 # print(dataset)
 # img , label = dataset[0]
 # img_flat = img.flatten().tolist()
@@ -99,8 +108,8 @@ def update_weights(weights,img_flat, label, learning_rate = 0.01):
 
 
 
-def train_one_batch(start = 0):
-    for i in range(start, start+100):
+def train_one_epoch(start = 0):
+    for i in range(start, start+30000):#only half of the trainingsdata
         img , label = dataset[i]
         img_flat = img.flatten().tolist()
 
