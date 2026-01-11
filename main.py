@@ -30,7 +30,8 @@ def run_layer(data,weights):
         result = 0
         for w in range(0,len(data)):
             result += (weights[n][1][w]*data[w])
-        result += bias 
+        result += bias
+        result = ReLU(result)
         output.append(result)
     print(len(output))
     return output
@@ -43,6 +44,12 @@ def init_randomWeights(neurons = 128, input_size = 784):
             weights[n][1][w] = (random()/5) - 0.1
     return weights
 
+def ReLU(num):
+    if num > 0:
+        return num
+    else:
+        return 0
+    
 def softmax(arr):
     sum = 0
     for i in arr:
@@ -50,6 +57,15 @@ def softmax(arr):
     for i in range(len(arr)):
         arr[i] = e ** arr[i]/sum
     return arr
+
+def calculate_cost(right_answer, output):
+    cost = 0
+    for i in range(len(output)):
+        if i == right_answer:
+            cost += (output[i] - 1)**2
+        else:
+            cost += output[i]**2
+    return cost
 
 hidden_layer_result = run_layer(img_flat, weights=weights)
 print(hidden_layer_result)
