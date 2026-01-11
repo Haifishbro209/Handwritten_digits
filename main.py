@@ -3,6 +3,7 @@ import json
 from random import random
 from math import e
 
+
 with open("hidden_layer.json") as f:
     weights = json.load(f) #weights and biases
 
@@ -76,6 +77,18 @@ print(softmax(output))
 
 # weights = init_randomWeights()
 # output_weights = init_randomWeights(10,128)
+
+
+def update_weights(weights,img_flat, label, learning_rate = 0.01):
+    for neuron in range(len(weights)):
+        for w in range(len(weights[neuron][1])):
+            weight = weights[neuron][1][w]
+
+
+#run hidden layer
+update_weights(weights)
+#run outpuit layer
+update_weights(output_weights)
 
 with open("hidden_layer.json" ,"w") as  f:
     json.dump(weights, f)
