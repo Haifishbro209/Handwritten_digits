@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from main import dataset
+from Numerical_Differentiation import dataset
 
 # 1. Beispielbilder anzeigen
 fig, axes = plt.subplots(2, 5, figsize=(10, 4))
