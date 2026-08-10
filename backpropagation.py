@@ -101,35 +101,35 @@ def forwardpass(img , label):
 #   
 '''
 Für jedes Output-Neuron i (0 bis 9) und jedes Hidden-Neuron j (0 bis 127):
-grad_output_weights[i][j] = error_output[i] * L1[j]
+grad_L2_weights[i][j] = error_output[i] * L1[j]
 '''
 def backwards(L2, L1, label, x):
     y_true = [0]*10
     y_true[label] = 1
-    grad_output_weights = [[0]*128]*10
-    grad_output_bias = [0]*10
+    grad_L2_weights = [[0]*128]*10
+    grad_L2_bias = [0]*10
 
     for i in range(10):
         local_error = L2[i] -  y_true[i]
-        grad_output_bias[i] = local_error
+        grad_L2_bias[i] = local_error
         for j in range(128):
-            grad_output_weights[i][j] = L1[j] * local_error
+            grad_L2_weights[i][j] = L1[j] * local_error
 
     error_hidden = [0]*128
-    grad_hidden_weights = [[0]*784]*128
-    grad_hidden_bias = [0]*128
+    grad_L1_weights = [[0]*784]*128
+    grad_L1_bias = [0]*128
     for i in range(128):
         if L1[i] ==0:
             error_hidden[i] = 0
         else :
             for n in range(10):
-                error_hidden[i] += grad_output_bias[n] * output_weights[n][1][i]
-        grad_hidden_bias[i] = error_hidden[i]
+                error_hidden[i] += grad_L2_bias[n] * output_weights[n][1][i]
+        grad_L1_bias[i] = error_hidden[i]
 
         for j in range(784):
-            grad_hidden_weights[i][j] = x[j] * error_hidden[i]
+            grad_L1_weights[i][j] = x[j] * error_hidden[i]
 
-    return grad_hidden_weights, grad_hidden_bias, grad_output_weights, grad_output_bias
+    return grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias
         
 
 
