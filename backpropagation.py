@@ -33,18 +33,7 @@ print(len(test_data))
 
 # print(img_flat)
 # print(label)
-def run_layer(data,weights):
-    output = []
-    for n in range(len(weights)):
-        bias = weights[n][0][0]
-        result = 0
-        for w in range(0,len(data)):
-            result += (weights[n][1][w]*data[w])
-        result += bias
-        result = ReLU(result)
-        output.append(result)
-    print(len(output))
-    return output 
+
 
 def init_randomWeights(neurons = 128, input_size = 784):
     # weihts = [[[bias],[weights]]neuron]every neuron
@@ -74,14 +63,56 @@ def calculate_loss(right_answer, output): #Cross-Entropy Loss: L = -∑ yᵢ log
     value = max(epsilon, min(output[right_answer], 1 - epsilon))
     return -math.log(value)
 
+def run_layer(data,weights):
+    output = []
+    for n in range(len(weights)):
+        bias = weights[n][0][0]
+        result = 0
+        for w in range(0,len(data)):
+            result += (weights[n][1][w]*data[w])
+        result += bias
+        result = ReLU(result)
+        output.append(result)
+    print(len(output))
+    return output 
 
-def run_all_layers(img):
-    hidden_layer_result = run_layer(img, weights=weights)
-    print(hidden_layer_result)
-    output = run_layer(hidden_layer_result,weights=output_weights)
+def forwardpass(img , label):
+    #img ist 784 array mit bilddaten
+    #L1 hiddenlayer L2 outputlayer
+    L1 = run_layer(img, weights=weights)
+    print(L1)
+    L2 = run_layer(L1,weights=output_weights)
+    print(L2)
+    output = softmax(L2)
     print(output)
-    print(softmax(output))
-    return softmax(output)
+    total_loss = calculate_loss(label,output)
+
+    return output,L1, label, total_loss , img
+
+# weihts = [[[bias],[weights]],[[bias],[weights]]]
+#                  neuron1          neuron2
+
+#   x[] -> x[0]*  w[0][0] +...+x[783]*  w[0][783] + bias[0] -> ReLU() = L1[0]    
+#       -> x[0]*w[127][0] +...+x[783]*w[127][783] + bias[783] -> ReLU() = L1[127]
+#  =>> L1 ##diferent weights 
+#   L1[] -> L1[0] * w[0][0] + ... L1[127]*w[0][127]+ bias[0] -> ReLU() = L2[0]
+#        -> L1[0] * w[9][0] + ... L1[127]*w[9][127]+ bias[9] -> ReLU() = L2[9]
+#   softmax(L2) (-> cross entrophy loss)
+#   
+'''
+Für jedes Output-Neuron i (0 bis 9) und jedes Hidden-Neuron j (0 bis 127):
+grad_output_weights[i][j] = error_output[i] * L1[j]
+'''
+def backwards(L2, L1, label, x):
+    y_true = [0]*10
+    y_true[label] = 1
+    grad_output_weights = [[]*128]*10
+    for i in range(10):
+        local_error = L2[i] -  y_true[i]
+        for j in range(128):
+            grad_output_weights[i][j] = L1[j] * local_error
+
+    
 # weights = init_randomWeights()
 # output_weights = init_randomWeights(10,128)
 
