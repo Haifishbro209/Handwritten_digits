@@ -4,6 +4,12 @@ import json
 from random import random
 from math import e
 
+global grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, loss
+grad_L2_weights = [[0]*128]*10
+grad_L2_bias = [0]*10
+grad_L1_weights = [[0]*784]*128
+grad_L1_bias = [0]*128
+
 
 with open("hidden_layer.json") as f:
     weights = json.load(f) #weights and biases
@@ -86,7 +92,7 @@ def forwardpass(img , label):
     output = softmax(L2)
     print(output)
     total_loss = calculate_loss(label,output)
-
+    loss += total_loss
     return output,L1, label, total_loss , img
 
 # weihts = [[[bias],[weights]],[[bias],[weights]]]
@@ -106,40 +112,59 @@ grad_L2_weights[i][j] = error_output[i] * L1[j]
 def backwards(L2, L1, label, x):
     y_true = [0]*10
     y_true[label] = 1
-    grad_L2_weights = [[0]*128]*10
-    grad_L2_bias = [0]*10
+
 
     for i in range(10):
         local_error = L2[i] -  y_true[i]
-        grad_L2_bias[i] = local_error
+        grad_L2_bias[i] += local_error
         for j in range(128):
-            grad_L2_weights[i][j] = L1[j] * local_error
+            grad_L2_weights[i][j] +=  L1[j] * local_error
 
     error_hidden = [0]*128
-    grad_L1_weights = [[0]*784]*128
-    grad_L1_bias = [0]*128
+
     for i in range(128):
         if L1[i] ==0:
             error_hidden[i] = 0
         else :
             for n in range(10):
                 error_hidden[i] += grad_L2_bias[n] * output_weights[n][1][i]
-        grad_L1_bias[i] = error_hidden[i]
+        grad_L1_bias[i] += error_hidden[i]
 
         for j in range(784):
-            grad_L1_weights[i][j] = x[j] * error_hidden[i]
+            grad_L1_weights[i][j] += x[j] * error_hidden[i]
 
-    return grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias
-        
+    #return grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias
+
+# weihts = [[[bias],[weights]],[[bias],[weights]]]
+#                  neuron1          neuron2
+
+
+
+def run(img,label, LR):
+    L2,L1, label, total_loss , img = forwardpass(img,label)
+    g_L1_weights, g_L1_bias, g_L2_weights, g_L2_bias = backwards(L2,L1, label,img)
+    total_loss
+    
+def run_epoche(size = 1000):
+    for i in range(size):
+        img, label = dataset[i]
 
 
 
 
     
+def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 0.2):
+    #ts training size
+    for n in range(128):
+        weights[n][0][0] = weights[n][0][0] - (grad_L1_bias[n]/ts) *LR 
+        for i in range(784):
+            weights[n][1][i] = weights[n][1][i] - (grad_L1_weights[n][i]/ts) * LR
+    for n in range(10):
+        output_weights[n][0][0] =output_weights[n][0][0] - (grad_L2_bias[n]/ts) * LR
+        for i in range(128):
+            output_weights[n][1][i] = output_weights[n][1][i] - (grad_L2_weights[n][i]/ts) *LR
 
-    
-# weights = init_randomWeights()
-# output_weights = init_randomWeights(10,128)
+
 
 
 
