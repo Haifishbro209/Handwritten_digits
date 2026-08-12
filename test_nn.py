@@ -1,0 +1,30 @@
+import random
+
+import backpropagation as bp
+
+
+def run_random_predictions(n: int = 100, use_test_data: bool = False, seed: int | None = None) -> None:
+
+	ds = bp.test_data if use_test_data else bp.dataset
+	
+	if seed is not None:
+		random.seed(seed)
+	indices = random.sample(range(len(ds)), n)
+
+	correct = 0
+	for idx in indices:
+		img, label = ds[idx]
+		img_flat = img.flatten().tolist()
+		output, *_ = bp.forwardpass(img_flat, label)
+		pred = max(range(len(output)), key=lambda i: output[i])
+		print(f"idx={idx:5d}  pred={pred}  actual={label}")
+		if pred == label:
+			correct += 1
+
+	acc = correct / n
+	print(f"\nSample accuracy: {correct}/{n} = {acc:.2%}")
+
+
+if __name__ == "__main__":
+	# By default, run on 100 random training images as requested.
+	run_random_predictions(n=100, use_test_data=False, seed=42)

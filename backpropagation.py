@@ -160,7 +160,7 @@ def run_epoche(size ):
 
 
     
-def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 0.02):
+def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 1):
     #ts training size
     for n in range(128):
         weights[n][0][0] = weights[n][0][0] - (grad_L1_bias[n]/ts) *LR 
@@ -174,14 +174,13 @@ def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias,
 
 
 
-for i in range(7):
-    print(f"Epoche {i}")
-    run_epoche(3000)
+if __name__ == "__main__":
+    for i in range(7):
+        print(f"Epoche {i}")
+        run_epoche(3000)
 
+    with open("hidden_layer.json" ,"w") as  f:
+        json.dump(weights, f)
 
-
-with open("hidden_layer.json" ,"w") as  f:
-    json.dump(weights, f)
-
-with open("output_layer.json" ,"w") as  f:
-    json.dump(output_weights, f)
+    with open("output_layer.json" ,"w") as  f:
+        json.dump(output_weights, f)
