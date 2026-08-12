@@ -152,9 +152,9 @@ def run_epoche(size ):
     print(f"Loss ={loss/size}")
     update_network(grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias, size)
     loss = 0
-    grad_L2_weights = [[0]*128]*10
+    grad_L2_weights = [[0] * 128 for _ in range(10)]
+    grad_L1_weights = [[0] * 784 for _ in range(128)]
     grad_L2_bias = [0]*10
-    grad_L1_weights = [[0]*784]*128
     grad_L1_bias = [0]*128  
 
 
