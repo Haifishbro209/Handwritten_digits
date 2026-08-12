@@ -1,15 +1,15 @@
 import math
 from torchvision import datasets, transforms #type:ignore
 import json
-from random import random
+from random import random , shuffle
 from math import e
 
 global grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, loss
-grad_L2_weights = [[0]*128]*10
+loss = 0
 grad_L2_bias = [0]*10
-grad_L1_weights = [[0]*784]*128
 grad_L1_bias = [0]*128
-
+grad_L2_weights = [[0] * 128 for _ in range(10)]
+grad_L1_weights = [[0] * 784 for _ in range(128)]
 
 with open("hidden_layer.json") as f:
     weights = json.load(f) #weights and biases
@@ -31,7 +31,7 @@ test_data = datasets.MNIST(
     transform=transforms.ToTensor()
 )
 
-print(len(test_data))
+#print(len(test_data)) 10 000
 
 # print(dataset)
 # img , label = dataset[0]
@@ -79,20 +79,15 @@ def run_layer(data,weights):
         result += bias
         result = ReLU(result)
         output.append(result)
-    print(len(output))
     return output 
 
 def forwardpass(img , label):
     #img ist 784 array mit bilddaten
     #L1 hiddenlayer L2 outputlayer
     L1 = run_layer(img, weights=weights)
-    print(L1)
     L2 = run_layer(L1,weights=output_weights)
-    print(L2)
     output = softmax(L2)
-    print(output)
     total_loss = calculate_loss(label,output)
-    loss += total_loss
     return output,L1, label, total_loss , img
 
 # weihts = [[[bias],[weights]],[[bias],[weights]]]
@@ -141,19 +136,32 @@ def backwards(L2, L1, label, x):
 
 
 def run(img,label, LR):
+    global loss
     L2,L1, label, total_loss , img = forwardpass(img,label)
-    g_L1_weights, g_L1_bias, g_L2_weights, g_L2_bias = backwards(L2,L1, label,img)
-    total_loss
-    
-def run_epoche(size = 1000):
-    for i in range(size):
+    backwards(L2,L1, label,img)
+    loss+= total_loss
+
+def run_epoche(size ):
+    global loss, grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias
+    indices = list(range(size))
+    shuffle(indices)
+    for i in indices:
         img, label = dataset[i]
+        img_flat =img.flatten().tolist()
+        run(img_flat,label,0.2)
+    print(f"Loss ={loss/size}")
+    update_network(grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias, size)
+    loss = 0
+    grad_L2_weights = [[0]*128]*10
+    grad_L2_bias = [0]*10
+    grad_L1_weights = [[0]*784]*128
+    grad_L1_bias = [0]*128  
 
 
 
 
     
-def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 0.2):
+def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 0.02):
     #ts training size
     for n in range(128):
         weights[n][0][0] = weights[n][0][0] - (grad_L1_bias[n]/ts) *LR 
@@ -167,7 +175,9 @@ def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias,
 
 
 
-
+for i in range(7):
+    print(f"Epoche {i}")
+    run_epoche(3000)
 
 
 
