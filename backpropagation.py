@@ -160,7 +160,7 @@ def run_epoche(size ):
 
 
     
-def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 1):
+def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 0.5):
     #ts training size
     for n in range(128):
         weights[n][0][0] = weights[n][0][0] - (grad_L1_bias[n]/ts) *LR 

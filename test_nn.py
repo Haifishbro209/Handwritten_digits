@@ -7,8 +7,7 @@ def run_random_predictions(n: int = 100, use_test_data: bool = False, seed: int 
 
 	ds = bp.test_data if use_test_data else bp.dataset
 	
-	if seed is not None:
-		random.seed(seed)
+	random.seed(seed)
 	indices = random.sample(range(len(ds)), n)
 
 	correct = 0
@@ -27,4 +26,4 @@ def run_random_predictions(n: int = 100, use_test_data: bool = False, seed: int 
 
 if __name__ == "__main__":
 	# By default, run on 100 random training images as requested.
-	run_random_predictions(n=100, use_test_data=False, seed=42)
+	run_random_predictions(n=10000, use_test_data=True)
