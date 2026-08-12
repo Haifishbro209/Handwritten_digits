@@ -108,7 +108,6 @@ def backwards(L2, L1, label, x):
     y_true = [0]*10
     y_true[label] = 1
 
-
     for i in range(10):
         local_error = L2[i] -  y_true[i]
         grad_L2_bias[i] += local_error
@@ -122,7 +121,7 @@ def backwards(L2, L1, label, x):
             error_hidden[i] = 0
         else :
             for n in range(10):
-                error_hidden[i] += grad_L2_bias[n] * output_weights[n][1][i]
+                error_hidden[i] += (L2[n] - y_true[n]) * output_weights[n][1][i]
         grad_L1_bias[i] += error_hidden[i]
 
         for j in range(784):
@@ -185,4 +184,4 @@ with open("hidden_layer.json" ,"w") as  f:
     json.dump(weights, f)
 
 with open("output_layer.json" ,"w") as  f:
-    json.dump(output_weights, f)    
+    json.dump(output_weights, f)
