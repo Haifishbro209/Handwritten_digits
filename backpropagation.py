@@ -142,7 +142,7 @@ def run(img,label, LR):
 
 def run_epoche(size ):
     global loss, grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias
-    indices = list(range(size))
+    indices = list(range(3000, size + 3000))
     shuffle(indices)
     for i in indices:
         img, label = dataset[i]
@@ -155,9 +155,6 @@ def run_epoche(size ):
     grad_L1_weights = [[0] * 784 for _ in range(128)]
     grad_L2_bias = [0]*10
     grad_L1_bias = [0]*128  
-
-
-
 
     
 def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 0.5):
@@ -177,7 +174,7 @@ def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias,
 if __name__ == "__main__":
     for i in range(7):
         print(f"Epoche {i}")
-        run_epoche(3000)
+        run_epoche(6000)
 
     with open("hidden_layer.json" ,"w") as  f:
         json.dump(weights, f)

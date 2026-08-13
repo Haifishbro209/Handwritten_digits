@@ -6,7 +6,7 @@ import backpropagation as bp
 def run_random_predictions(n: int = 100, use_test_data: bool = False, seed: int | None = None) -> None:
 
 	ds = bp.test_data if use_test_data else bp.dataset
-	
+	print(len(ds))
 	random.seed(seed)
 	indices = random.sample(range(len(ds)), n)
 
