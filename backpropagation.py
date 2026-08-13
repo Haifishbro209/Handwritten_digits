@@ -134,22 +134,22 @@ def backwards(L2, L1, label, x):
 
 
 
-def run(img,label, LR):
+def run(img,label):
     global loss
     L2,L1, label, total_loss , img = forwardpass(img,label)
     backwards(L2,L1, label,img)
     loss+= total_loss
 
-def run_epoche(size ):
+def run_epoche(size, LR ):
     global loss, grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias
     indices = list(range(size))
     shuffle(indices)
     for i in indices:
         img, label = dataset[i]
         img_flat =img.flatten().tolist()
-        run(img_flat,label,0.2)
+        run(img_flat,label)
     print(f"Loss ={loss/size}")
-    update_network(grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias, size)
+    update_network(grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias, size, LR = LR)
     loss = 0
     grad_L2_weights = [[0] * 128 for _ in range(10)]
     grad_L1_weights = [[0] * 784 for _ in range(128)]
@@ -157,7 +157,7 @@ def run_epoche(size ):
     grad_L1_bias = [0]*128  
 
     
-def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 2):
+def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 5):
     #ts training size
     for n in range(128):
         weights[n][0][0] = weights[n][0][0] - (grad_L1_bias[n]/ts) *LR 
@@ -172,9 +172,10 @@ def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias,
 
 
 if __name__ == "__main__":
-    for i in range(7):
+    # init_randomWeights()
+    for i in range(10):
         print(f"Epoche {i}")
-        run_epoche(30000)
+        run_epoche(500)
 
     with open("hidden_layer.json" ,"w") as  f:
         json.dump(weights, f)
