@@ -172,10 +172,11 @@ def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias,
 
 
 if __name__ == "__main__":
-    # init_randomWeights()
-    for i in range(10):
+    # weights = init_randomWeights(128,784)
+    # output_weights = init_randomWeights(10,128)
+    for i in range(4):
         print(f"Epoche {i}")
-        run_epoche(500)
+        run_epoche(60000, 0.7)
 
     with open("hidden_layer.json" ,"w") as  f:
         json.dump(weights, f)
