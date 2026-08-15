@@ -140,9 +140,10 @@ def run(img,label):
     backwards(L2,L1, label,img)
     loss+= total_loss
 
-def run_epoche(size, LR ):
+def run_epoche(LR, start =0, end =1000 ):
+    size = end-start
     global loss, grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias
-    indices = list(range(12000, 12000+size))
+    indices = list(range(start, end))
     shuffle(indices)
     for i in indices:
         img, label = dataset[i]
@@ -168,18 +169,19 @@ def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias,
         for i in range(128):
             output_weights[n][1][i] = output_weights[n][1][i] - (grad_L2_weights[n][i]/ts) *LR
 
-
-
+def safe_weights():
+    with open("hidden_layer.json" ,"w") as  f:
+        json.dump(weights, f)
+    with open("output_layer.json" ,"w") as  f:
+            json.dump(output_weights, f)
 
 if __name__ == "__main__":
     # weights = init_randomWeights(128,784)
     # output_weights = init_randomWeights(10,128)
-    for i in range(4):
-        print(f"Epoche {i}")
-        run_epoche(1000, 0.5)
-
-    with open("hidden_layer.json" ,"w") as  f:
-        json.dump(weights, f)
-
-    with open("output_layer.json" ,"w") as  f:
-        json.dump(output_weights, f)
+    try:
+        for i in range(60):
+            print(f"Epoche {i}")
+            run_epoche(0.5, start=i*1000, end = (i+1)*1000)
+        safe_weights()
+    except(KeyboardInterrupt):
+        safe_weights()
