@@ -142,7 +142,7 @@ def run(img,label):
 
 def run_epoche(size, LR ):
     global loss, grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias
-    indices = list(range(size))
+    indices = list(range(12000, 12000+size))
     shuffle(indices)
     for i in indices:
         img, label = dataset[i]
@@ -176,7 +176,7 @@ if __name__ == "__main__":
     # output_weights = init_randomWeights(10,128)
     for i in range(4):
         print(f"Epoche {i}")
-        run_epoche(60000, 0.7)
+        run_epoche(1000, 0.5)
 
     with open("hidden_layer.json" ,"w") as  f:
         json.dump(weights, f)

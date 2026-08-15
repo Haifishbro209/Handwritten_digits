@@ -34,4 +34,4 @@ def run_random_predictions(n: int = 100, use_test_data: bool = False, seed: int 
     
 
 if __name__ == "__main__":
-	run_random_predictions(n=1000, use_test_data=True)
+	run_random_predictions(n=10000, use_test_data=True)
