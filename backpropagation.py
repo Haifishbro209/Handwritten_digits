@@ -140,22 +140,24 @@ def run(img,label):
     backwards(L2,L1, label,img)
     loss+= total_loss
 
-def run_epoche(LR, start =0, end =1000 ):
-    size = end-start
+def run_epoche(LR, shuffled_data , size = 1000):
     global loss, grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias
-    indices = list(range(start, end))
-    shuffle(indices)
-    for i in indices:
-        img, label = dataset[i]
-        img_flat =img.flatten().tolist()
-        run(img_flat,label)
-    print(f"Loss ={loss/size}")
-    update_network(grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias, size, LR = LR)
-    loss = 0
-    grad_L2_weights = [[0] * 128 for _ in range(10)]
-    grad_L1_weights = [[0] * 784 for _ in range(128)]
-    grad_L2_bias = [0]*10
-    grad_L1_bias = [0]*128  
+
+
+    for batch_start in range(0, 60000, size):
+        batch = shuffled_data[batch_start : batch_start + size]
+        for i in batch:
+            img, label = dataset[i]
+            img_flat =img.flatten().tolist()
+            run(img_flat,label)
+        print(f"Loss ={loss/size}")
+        update_network(grad_L1_weights , grad_L1_bias, grad_L2_weights, grad_L2_bias, size, LR = LR)
+
+        loss = 0
+        grad_L2_weights = [[0] * 128 for _ in range(10)]
+        grad_L1_weights = [[0] * 784 for _ in range(128)]
+        grad_L2_bias = [0]*10
+        grad_L1_bias = [0]*128  
 
     
 def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 5):
@@ -179,9 +181,14 @@ if __name__ == "__main__":
     # weights = init_randomWeights(128,784)
     # output_weights = init_randomWeights(10,128)
     try:
-        for i in range(60):
+        LR = 0.5
+        for i in range(20):
             print(f"Epoche {i}")
-            run_epoche(0.5, start=i*1000, end = (i+1)*1000)
+            if i >0 and i % 4 == 0:
+                LR = LR*0.5
+            all_indices= list(range(60000))
+            shuffle(all_indices)
+            run_epoche(LR,all_indices)
         safe_weights()
     except(KeyboardInterrupt):
         safe_weights()
