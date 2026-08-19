@@ -24,8 +24,12 @@ def upload_image():
         arr = np.array(pixels, dtype=np.float32).reshape((height, width))
         global last_pixel_array
         last_pixel_array = arr
-        out, *_ = forwardpass(last_pixel_array,0)
-        return jsonify({'message': f'{max(out)} mit {out[max(out)]*100}% sicherheit'}), 200
+        # Flatten to 784-length list for the network and predict class index
+        arr_flat = arr.flatten().tolist()
+        out, *_ = forwardpass(arr_flat, 0)
+        pred = max(range(len(out)), key=lambda i: out[i])
+        prob = out[pred]
+        return jsonify({'message': f'Vorhersage: {pred}, Sicherheit: {prob*100:.1f}%'}), 200
 
     return jsonify({'message': 'Nur JSON-Uploads mit Pixel-Array werden unterstützt'}), 400
 
