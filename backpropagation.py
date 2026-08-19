@@ -159,7 +159,22 @@ def run_epoche(LR, shuffled_data , size = 1000):
         grad_L2_bias = [0]*10
         grad_L1_bias = [0]*128  
 
+
+def test_accuracy():
+    correct = 0
+    for idx in range(len(test_data)):
+        img, label = test_data[idx]
+        img_flat = img.flatten().tolist()
+        output, *_ = forwardpass(img_flat, label)
+        pred = max(range(len(output)), key=lambda i: output[i])
+        if pred == label:
+            correct += 1
+    acc = correct / len(test_data)
+    print(f"\nSample accuracy: {acc}")
+    return acc
     
+
+
 def update_network(grad_L1_weights, grad_L1_bias, grad_L2_weights, grad_L2_bias, ts ,LR = 5):
     #ts training size
     for n in range(128):
@@ -182,13 +197,27 @@ if __name__ == "__main__":
     # output_weights = init_randomWeights(10,128)
     try:
         LR = 0.5
+        patience = 0
+        best_acc = test_accuracy()
         for i in range(20):
+            print(f"patience = {patience}")
             print(f"Epoche {i}")
             if i >0 and i % 4 == 0:
                 LR = LR*0.5
             all_indices= list(range(60000))
             shuffle(all_indices)
+            if patience >= 3:
+                print("Early Stopping - keine Verbesserung mehr")
+                break
             run_epoche(LR,all_indices)
+            acc = test_accuracy()
+            print(f"Accuracy = {acc}")
+            if(acc > best_acc):
+                best_acc = acc
+                patience = 0
+            else:
+                patience +=1
+
         safe_weights()
     except(KeyboardInterrupt):
         safe_weights()
